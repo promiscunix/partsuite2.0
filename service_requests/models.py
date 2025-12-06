@@ -9,6 +9,12 @@ class ServiceRequest(TimeStampedModel):
     RADIO = ("radio", "Radio")
     VOR = ("vor", "Vehicle Off Road")
 
+  class WarrantyType(models.TextChoices):
+    MOPAR_WARRANTY = ("mopar_warranty", "Mopar Warranty")
+    BASIC_WARRANTY = ("basic_warranty", "Basic Warranty")
+    CUSTOMER_PAY = ("customer_pay", "Customer Pay")
+    SERVICE_CONTRACT = ("service_contract", "Service Contract")
+
   class Status(models.TextChoices):
     OPEN = ("open", "Open")
     IN_PROGRESS = ("in_progress", "In progress")
@@ -16,9 +22,14 @@ class ServiceRequest(TimeStampedModel):
     CANCELLED = ("cancelled", "Cancelled")
 
   request_type = models.CharField(max_length=32, choices=RequestType.choices)
+  part_number = models.CharField(max_length=64, blank=True)
   vin = models.CharField(max_length=32, blank=True)
   ro_number = models.CharField(max_length=64, blank=True)
   customer_name = models.CharField(max_length=128, blank=True)
+  customer_number = models.CharField(max_length=64, blank=True)
+  warranty_type = models.CharField(
+    max_length=32, choices=WarrantyType.choices, default=WarrantyType.MOPAR_WARRANTY
+  )
   promised_date = models.DateField(null=True, blank=True)
   expiry_date = models.DateField(null=True, blank=True)
   status = models.CharField(max_length=32, choices=Status.choices, default=Status.OPEN)

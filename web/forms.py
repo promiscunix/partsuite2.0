@@ -47,9 +47,12 @@ class ServiceRequestForm(forms.ModelForm):
     model = ServiceRequest
     fields = [
       "request_type",
+      "part_number",
       "vin",
       "ro_number",
       "customer_name",
+      "customer_number",
+      "warranty_type",
       "promised_date",
       "expiry_date",
       "status",
