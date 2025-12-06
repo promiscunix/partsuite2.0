@@ -11,8 +11,11 @@
         <th>ID</th>
         <th>Type</th>
         <th>Status</th>
+        <th>Part #</th>
         <th>VIN</th>
         <th>RO</th>
+        <th>Customer #</th>
+        <th>Warranty</th>
         <th>Promised</th>
         <th>Expiry</th>
       </tr>
@@ -23,13 +26,16 @@
           <td><a href="{% url 'service-detail' req.pk %}">{{ req.id }}</a></td>
           <td>{{ req.get_request_type_display }}</td>
           <td>{{ req.get_status_display }}</td>
+          <td>{{ req.part_number|default:"-" }}</td>
           <td>{{ req.vin|default:"-" }}</td>
           <td>{{ req.ro_number|default:"-" }}</td>
+          <td>{{ req.customer_number|default:"-" }}</td>
+          <td>{{ req.get_warranty_type_display|default:"-" }}</td>
           <td>{{ req.promised_date|default:"-" }}</td>
           <td>{{ req.expiry_date|default:"-" }}</td>
         </tr>
       {% empty %}
-        <tr><td colspan="7" class="muted">No service requests.</td></tr>
+        <tr><td colspan="9" class="muted">No service requests.</td></tr>
       {% endfor %}
     </tbody>
   </table>
