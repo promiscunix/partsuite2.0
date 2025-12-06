@@ -76,7 +76,18 @@ class ServiceRequestCommentForm(forms.ModelForm):
 class DueBillRequestForm(forms.ModelForm):
   class Meta:
     model = DueBillRequest
-    fields = ["customer_name", "vehicle_info", "promised_date", "status", "assigned_to", "notes"]
+    fields = [
+      "customer_name",
+      "customer_number",
+      "vin",
+      "stock_number",
+      "sales_consultant_name",
+      "vehicle_info",
+      "promised_date",
+      "status",
+      "assigned_to",
+      "notes",
+    ]
     widgets = {
       "promised_date": forms.DateInput(attrs={"type": "date"}),
       "notes": forms.Textarea(attrs={"rows": 3}),

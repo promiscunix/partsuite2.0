@@ -1,8 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
+from django.utils import timezone
 from django.views.generic import TemplateView, ListView, DetailView, CreateView
 
 from accounts.models import User
@@ -243,4 +244,22 @@ def duebill_comment_add(request, pk):
     messages.success(request, "Comment added.")
   else:
     messages.error(request, "Could not add comment.")
+  return redirect("sales-detail", pk=pk)
+
+
+@role_required([User.Role.ADMIN, User.Role.SALES, User.Role.PARTS])
+def duebill_send_to_parts(request, pk):
+  req = get_object_or_404(DueBillRequest, pk=pk)
+  if request.method != "POST":
+    return redirect("sales-detail", pk=pk)
+
+  if req.sent_to_parts_at:
+    messages.info(request, "This request has already been sent to parts.")
+    return redirect("sales-detail", pk=pk)
+
+  req.sent_to_parts_at = timezone.now()
+  if req.status == DueBillRequest.Status.OPEN:
+    req.status = DueBillRequest.Status.IN_PROGRESS
+  req.save(update_fields=["sent_to_parts_at", "status"])
+  messages.success(request, "Request sent to parts department.")
   return redirect("sales-detail", pk=pk)
