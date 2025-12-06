@@ -9,11 +9,31 @@
     <div class="pill">{{ object.get_status_display }}</div>
   </div>
   <dl class="meta">
+    <div><dt>Customer #</dt><dd>{{ object.customer_number|default:"-" }}</dd></div>
+    <div><dt>VIN</dt><dd>{{ object.vin|default:"-" }}</dd></div>
+    <div><dt>Stock #</dt><dd>{{ object.stock_number|default:"-" }}</dd></div>
+    <div><dt>Sales consultant</dt><dd>{{ object.sales_consultant_name|default:"-" }}</dd></div>
+    <div><dt>Vehicle info</dt><dd>{{ object.vehicle_info|default:"-" }}</dd></div>
     <div><dt>Promised</dt><dd>{{ object.promised_date|default:"-" }}</dd></div>
     <div><dt>Requested by</dt><dd>{{ object.requested_by|default:"-" }}</dd></div>
     <div><dt>Assigned to</dt><dd>{{ object.assigned_to|default:"-" }}</dd></div>
+    <div><dt>Sent to parts</dt><dd>{{ object.sent_to_parts_at|default:"Not sent" }}</dd></div>
   </dl>
   <p>{{ object.notes|default:"No notes." }}</p>
+
+  <form method="post" action="{% url 'sales-send' object.pk %}" class="inline-form">
+    {% csrf_token %}
+    <button type="submit" class="button primary" {% if object.sent_to_parts_at %}disabled{% endif %}>
+      {% if object.sent_to_parts_at %}
+        Sent to parts
+      {% else %}
+        Send to parts department
+      {% endif %}
+    </button>
+    {% if object.sent_to_parts_at %}
+      <span class="muted">Request sent on {{ object.sent_to_parts_at }}</span>
+    {% endif %}
+  </form>
 </section>
 
 <section class="card">

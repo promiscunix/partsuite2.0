@@ -15,9 +15,25 @@ class DueBillCommentInline(admin.TabularInline):
 
 @admin.register(DueBillRequest)
 class DueBillRequestAdmin(admin.ModelAdmin):
-  list_display = ("id", "customer_name", "vehicle_info", "status", "promised_date")
-  list_filter = ("status",)
-  search_fields = ("customer_name", "vehicle_info")
+  list_display = (
+    "id",
+    "customer_name",
+    "customer_number",
+    "vin",
+    "stock_number",
+    "status",
+    "promised_date",
+    "sent_to_parts_at",
+  )
+  list_filter = ("status", "sent_to_parts_at")
+  search_fields = (
+    "customer_name",
+    "customer_number",
+    "vin",
+    "stock_number",
+    "vehicle_info",
+    "sales_consultant_name",
+  )
   inlines = [DueBillItemInline, DueBillCommentInline]
 
 

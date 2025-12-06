@@ -12,6 +12,10 @@ class DueBillRequest(TimeStampedModel):
     CANCELLED = ("cancelled", "Cancelled")
 
   customer_name = models.CharField(max_length=128, blank=True)
+  customer_number = models.CharField(max_length=64, blank=True)
+  vin = models.CharField(max_length=64, blank=True)
+  stock_number = models.CharField(max_length=64, blank=True)
+  sales_consultant_name = models.CharField(max_length=128, blank=True)
   vehicle_info = models.CharField(max_length=128, blank=True)
   promised_date = models.DateField(null=True, blank=True)
   status = models.CharField(max_length=32, choices=Status.choices, default=Status.OPEN)
@@ -22,6 +26,7 @@ class DueBillRequest(TimeStampedModel):
     settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="due_bills_assigned"
   )
   notes = models.TextField(blank=True)
+  sent_to_parts_at = models.DateTimeField(null=True, blank=True)
 
   def __str__(self) -> str:
     return f"Due Bill {self.id} - {self.customer_name}"

@@ -10,9 +10,13 @@
       <tr>
         <th>ID</th>
         <th>Customer</th>
+        <th>Customer #</th>
+        <th>VIN</th>
+        <th>Stock #</th>
         <th>Vehicle</th>
         <th>Status</th>
         <th>Promised</th>
+        <th>Sent to parts</th>
       </tr>
     </thead>
     <tbody>
@@ -20,12 +24,16 @@
         <tr>
           <td><a href="{% url 'sales-detail' r.pk %}">{{ r.id }}</a></td>
           <td>{{ r.customer_name|default:"-" }}</td>
+          <td>{{ r.customer_number|default:"-" }}</td>
+          <td>{{ r.vin|default:"-" }}</td>
+          <td>{{ r.stock_number|default:"-" }}</td>
           <td>{{ r.vehicle_info|default:"-" }}</td>
           <td>{{ r.get_status_display }}</td>
           <td>{{ r.promised_date|default:"-" }}</td>
+          <td>{{ r.sent_to_parts_at|default:"-" }}</td>
         </tr>
       {% empty %}
-        <tr><td colspan="5" class="muted">No due bills yet.</td></tr>
+        <tr><td colspan="8" class="muted">No due bills yet.</td></tr>
       {% endfor %}
     </tbody>
   </table>
