@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <div class="header">
+    <h1>Receipts</h1>
+    <a class="button primary" href="{% url 'receipt-create' %}">Log receipt</a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Filename</th>
+        <th>Source</th>
+        <th>Uploaded by</th>
+        <th>Processed</th>
+        <th>Created</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for receipt in object_list %}
+        <tr>
+          <td>{{ receipt.id }}</td>
+          <td>{{ receipt.filename|default:"-" }}</td>
+          <td>{{ receipt.get_source_display }}</td>
+          <td>{{ receipt.uploaded_by|default:"-" }}</td>
+          <td>{{ receipt.processed_at|default:"-" }}</td>
+          <td>{{ receipt.created_at }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" class="muted">No receipts yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

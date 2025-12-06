@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <div class="header">
+    <div>
+      <h1>Due Bill #{{ object.id }}</h1>
+      <p class="muted">{{ object.customer_name|default:"-" }} · {{ object.vehicle_info|default:"-" }}</p>
+    </div>
+    <div class="pill">{{ object.get_status_display }}</div>
+  </div>
+  <dl class="meta">
+    <div><dt>Promised</dt><dd>{{ object.promised_date|default:"-" }}</dd></div>
+    <div><dt>Requested by</dt><dd>{{ object.requested_by|default:"-" }}</dd></div>
+    <div><dt>Assigned to</dt><dd>{{ object.assigned_to|default:"-" }}</dd></div>
+  </dl>
+  <p>{{ object.notes|default:"No notes." }}</p>
+</section>
+
+<section class="card">
+  <h2>Items</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th>Part #</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in object.items.all %}
+        <tr>
+          <td>{{ item.description }}</td>
+          <td>{{ item.part_number|default:"-" }}</td>
+          <td>{{ item.get_status_display }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="3" class="muted">No items.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <form method="post" action="{% url 'sales-item-add' object.pk %}">
+    {% csrf_token %}
+    <div class="field">
+      <label for="desc">Description</label>
+      <input id="desc" name="description" required>
+    </div>
+    <div class="field">
+      <label for="part_number">Part # (optional)</label>
+      <input id="part_number" name="part_number">
+    </div>
+    <div class="field">
+      <label for="status">Status</label>
+      <select id="status" name="status">
+        {% for val, label in object.items.model.Status.choices %}
+          <option value="{{ val }}">{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="button primary">Add item</button>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Comments</h2>
+  <ul class="list">
+    {% for c in object.comments.all %}
+      <li>
+        <div class="meta-line">{{ c.author|default:"-" }} · {{ c.created_at }}</div>
+        <div>{{ c.body }}</div>
+      </li>
+    {% empty %}
+      <li class="muted">No comments yet.</li>
+    {% endfor %}
+  </ul>
+  <form method="post" action="{% url 'sales-comment-add' object.pk %}">
+    {% csrf_token %}
+    <div class="field">
+      <label for="comment_body">Add comment</label>
+      <textarea id="comment_body" name="body" rows="2" required></textarea>
+    </div>
+    <button type="submit" class="button primary">Post comment</button>
+  </form>
+</section>
+{% endblock %}

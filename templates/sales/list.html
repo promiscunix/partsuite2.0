@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <div class="header">
+    <h1>Sales Due Bills</h1>
+    <a class="button primary" href="{% url 'sales-create' %}">New due bill</a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Customer</th>
+        <th>Vehicle</th>
+        <th>Status</th>
+        <th>Promised</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in object_list %}
+        <tr>
+          <td><a href="{% url 'sales-detail' r.pk %}">{{ r.id }}</a></td>
+          <td>{{ r.customer_name|default:"-" }}</td>
+          <td>{{ r.vehicle_info|default:"-" }}</td>
+          <td>{{ r.get_status_display }}</td>
+          <td>{{ r.promised_date|default:"-" }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="muted">No due bills yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

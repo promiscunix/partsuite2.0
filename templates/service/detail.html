@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <div class="header">
+    <div>
+      <h1>Service Request #{{ object.id }}</h1>
+      <p class="muted">{{ object.get_request_type_display }} · {{ object.get_status_display }}</p>
+    </div>
+  </div>
+  <dl class="meta">
+    <div><dt>VIN</dt><dd>{{ object.vin|default:"-" }}</dd></div>
+    <div><dt>RO #</dt><dd>{{ object.ro_number|default:"-" }}</dd></div>
+    <div><dt>Promised</dt><dd>{{ object.promised_date|default:"-" }}</dd></div>
+    <div><dt>Expiry</dt><dd>{{ object.expiry_date|default:"-" }}</dd></div>
+    <div><dt>Assigned</dt><dd>{{ object.assigned_to|default:"-" }}</dd></div>
+  </dl>
+  <p>{{ object.notes|default:"No notes." }}</p>
+</section>
+
+<section class="card">
+  <h2>Comments</h2>
+  <ul class="list">
+    {% for c in object.comments.all %}
+      <li>
+        <div class="meta-line">{{ c.author|default:"-" }} · {{ c.created_at }}</div>
+        <div>{{ c.body }}</div>
+      </li>
+    {% empty %}
+      <li class="muted">No comments yet.</li>
+    {% endfor %}
+  </ul>
+  <form method="post" action="{% url 'service-comment-add' object.pk %}">
+    {% csrf_token %}
+    <div class="field">
+      <label for="comment_body">Add comment</label>
+      <textarea id="comment_body" name="body" rows="2" required></textarea>
+    </div>
+    <button type="submit" class="button primary">Post comment</button>
+  </form>
+</section>
+{% endblock %}

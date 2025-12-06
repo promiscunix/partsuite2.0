@@ -1,0 +1,26 @@
+# Python / Django
+__pycache__/
+*.py[cod]
+*.sqlite3
+db.sqlite3
+.venv/
+.env
+.env.*
+
+# Django artifacts
+staticfiles/
+media/
+
+# Nix
+result
+flake.lock
+
+# Data / uploads
+data/
+*.pdf
+*.csv
+
+# Editor
+.idea/
+.vscode/
+.DS_Store

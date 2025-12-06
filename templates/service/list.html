@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <div class="header">
+    <h1>Service Requests</h1>
+    <a class="button primary" href="{% url 'service-create' %}">New request</a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>VIN</th>
+        <th>RO</th>
+        <th>Promised</th>
+        <th>Expiry</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for req in object_list %}
+        <tr>
+          <td><a href="{% url 'service-detail' req.pk %}">{{ req.id }}</a></td>
+          <td>{{ req.get_request_type_display }}</td>
+          <td>{{ req.get_status_display }}</td>
+          <td>{{ req.vin|default:"-" }}</td>
+          <td>{{ req.ro_number|default:"-" }}</td>
+          <td>{{ req.promised_date|default:"-" }}</td>
+          <td>{{ req.expiry_date|default:"-" }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7" class="muted">No service requests.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

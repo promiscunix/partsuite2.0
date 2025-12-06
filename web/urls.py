@@ -1,0 +1,46 @@
+from django.urls import path
+from django.contrib.auth import views as auth_views
+
+from .views import (
+  DashboardView,
+  InvoiceListView,
+  InvoiceDetailView,
+  InvoiceCreateView,
+  InvoiceLineCreateView,
+  ReceiptListView,
+  ReceiptCreateView,
+  ReturnListView,
+  ReturnCreateView,
+  ServiceRequestListView,
+  ServiceRequestDetailView,
+  ServiceRequestCreateView,
+  service_comment_add,
+  DueBillListView,
+  DueBillDetailView,
+  DueBillCreateView,
+  duebill_item_add,
+  duebill_comment_add,
+)
+
+urlpatterns = [
+  path("", DashboardView.as_view(), name="dashboard"),
+  path("login/", auth_views.LoginView.as_view(template_name="registration/login.html"), name="login"),
+  path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+  path("invoices/", InvoiceListView.as_view(), name="invoice-list"),
+  path("invoices/new/", InvoiceCreateView.as_view(), name="invoice-create"),
+  path("invoices/<int:pk>/", InvoiceDetailView.as_view(), name="invoice-detail"),
+  path("invoices/<int:invoice_pk>/lines/new/", InvoiceLineCreateView.as_view(), name="invoice-line-create"),
+  path("receipts/", ReceiptListView.as_view(), name="receipt-list"),
+  path("receipts/new/", ReceiptCreateView.as_view(), name="receipt-create"),
+  path("returns/", ReturnListView.as_view(), name="return-list"),
+  path("returns/new/", ReturnCreateView.as_view(), name="return-create"),
+  path("service/", ServiceRequestListView.as_view(), name="service-list"),
+  path("service/new/", ServiceRequestCreateView.as_view(), name="service-create"),
+  path("service/<int:pk>/", ServiceRequestDetailView.as_view(), name="service-detail"),
+  path("service/<int:pk>/comment/", service_comment_add, name="service-comment-add"),
+  path("sales/", DueBillListView.as_view(), name="sales-list"),
+  path("sales/new/", DueBillCreateView.as_view(), name="sales-create"),
+  path("sales/<int:pk>/", DueBillDetailView.as_view(), name="sales-detail"),
+  path("sales/<int:pk>/item/", duebill_item_add, name="sales-item-add"),
+  path("sales/<int:pk>/comment/", duebill_comment_add, name="sales-comment-add"),
+]

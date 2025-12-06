@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <div class="header">
+    <h1>Invoices</h1>
+    <a class="button primary" href="{% url 'invoice-create' %}">New Invoice</a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Supplier</th>
+        <th>Date</th>
+        <th>Total</th>
+        <th>Status</th>
+        <th>Billed</th>
+        <th>Received</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for invoice in object_list %}
+        <tr>
+          <td><a href="{% url 'invoice-detail' invoice.pk %}">{{ invoice.invoice_number }}</a></td>
+          <td>{{ invoice.supplier.name }}</td>
+          <td>{{ invoice.invoice_date|default:"-" }}</td>
+          <td>${{ invoice.total_amount }}</td>
+          <td>{{ invoice.get_status_display }}</td>
+          <td>{{ invoice.billed_flag|yesno:"Yes,No" }}</td>
+          <td>{{ invoice.received_flag|yesno:"Yes,No" }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7" class="muted">No invoices yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="grid">
+  <div class="card stat">
+    <div class="stat-value">{{ stats.invoices }}</div>
+    <div class="stat-label">Invoices</div>
+  </div>
+  <div class="card stat">
+    <div class="stat-value">{{ stats.returns }}</div>
+    <div class="stat-label">Returns</div>
+  </div>
+  <div class="card stat">
+    <div class="stat-value">{{ stats.service_requests }}</div>
+    <div class="stat-label">Service requests</div>
+  </div>
+  <div class="card stat">
+    <div class="stat-value">{{ stats.due_bills }}</div>
+    <div class="stat-label">Due bills</div>
+  </div>
+</section>
+{% endblock %}

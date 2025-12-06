@@ -1,0 +1,68 @@
+:root {
+  --admin-bg: #0f0c1d;
+  --admin-card: rgba(255,255,255,0.04);
+  --admin-border: rgba(255,255,255,0.08);
+  --admin-purple: #7c3aed;
+  --admin-mocha: #d0a06f;
+  --admin-text: #f7f5ff;
+  --admin-muted: #9da0b8;
+}
+
+body.login, body {
+  background: radial-gradient(circle at 20% 20%, rgba(124,58,237,0.12), transparent 26%),
+              radial-gradient(circle at 80% 10%, rgba(208,160,111,0.16), transparent 28%),
+              var(--admin-bg);
+  color: var(--admin-text);
+}
+
+#header {
+  background: linear-gradient(90deg, rgba(124,58,237,0.28), rgba(208,160,111,0.24));
+  color: var(--admin-text);
+  border-bottom: 1px solid var(--admin-border);
+}
+
+#branding h1, #branding h1 a { color: var(--admin-text); font-weight: 800; letter-spacing: 0.3px; }
+
+.module, .content, .breadcrumbs {
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+}
+
+.breadcrumbs {
+  color: var(--admin-muted);
+}
+.breadcrumbs a { color: var(--admin-text); }
+
+a, a:link, a:visited { color: var(--admin-mocha); }
+a:hover { color: var(--admin-purple); }
+
+.button, input[type=submit], input[type=button], .submit-row input {
+  background: linear-gradient(135deg, var(--admin-purple), var(--admin-mocha));
+  color: #0b0614;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+table {
+  color: var(--admin-text);
+}
+
+th, td {
+  border-color: var(--admin-border) !important;
+}
+
+.login #container {
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  color: var(--admin-text);
+}
+
+.form-row input, .form-row select, .form-row textarea {
+  background: rgba(255,255,255,0.06);
+  color: var(--admin-text);
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+}

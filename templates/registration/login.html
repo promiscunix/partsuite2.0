@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card narrow">
+  <h1>Sign in</h1>
+  <form method="post">
+    {% csrf_token %}
+    <div class="field">
+      <label for="id_username">Username</label>
+      <input type="text" name="username" id="id_username" required autofocus>
+    </div>
+    <div class="field">
+      <label for="id_password">Password</label>
+      <input type="password" name="password" id="id_password" required>
+    </div>
+    <button type="submit" class="button primary">Login</button>
+    {% if form.errors %}
+      <p class="error">Invalid credentials</p>
+    {% endif %}
+  </form>
+</section>
+{% endblock %}

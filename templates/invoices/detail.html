@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <div class="header">
+    <div>
+      <h1>Invoice {{ object.invoice_number }}</h1>
+      <p class="muted">{{ object.supplier.name }} · {{ object.invoice_date|default:"No date" }}</p>
+    </div>
+    <div class="pill">{{ object.get_status_display }}</div>
+  </div>
+  <dl class="meta">
+    <div><dt>Total</dt><dd>${{ object.total_amount }}</dd></div>
+    <div><dt>Billed</dt><dd>{{ object.billed_flag|yesno:"Yes,No" }}</dd></div>
+    <div><dt>Received</dt><dd>{{ object.received_flag|yesno:"Yes,No" }}</dd></div>
+    <div><dt>Uploaded by</dt><dd>{{ object.uploaded_by|default:"-" }}</dd></div>
+  </dl>
+</section>
+
+<section class="card">
+  <div class="header">
+    <h2>Lines</h2>
+    <a class="button" href="{% url 'invoice-line-create' object.pk %}">Add line</a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Part #</th>
+        <th>Description</th>
+        <th>Qty</th>
+        <th>Unit</th>
+        <th>Extended</th>
+        <th>Refund status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for line in object.lines.all %}
+        <tr>
+          <td>{{ line.part_number }}</td>
+          <td>{{ line.description }}</td>
+          <td>{{ line.quantity }}</td>
+          <td>${{ line.unit_price }}</td>
+          <td>${{ line.extended_price }}</td>
+          <td>{{ line.get_refund_status_display }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" class="muted">No lines.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

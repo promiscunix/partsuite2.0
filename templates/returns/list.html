@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <div class="header">
+    <h1>Returns</h1>
+    <a class="button primary" href="{% url 'return-create' %}">New return</a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Part</th>
+        <th>Status</th>
+        <th>RMA</th>
+        <th>Refund received</th>
+        <th>Created</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in object_list %}
+        <tr>
+          <td>{{ r.id }}</td>
+          <td>{{ r.invoice_line.part_number }}</td>
+          <td>{{ r.get_status_display }}</td>
+          <td>{{ r.rma_number|default:"-" }}</td>
+          <td>{{ r.refund_received_at|default:"-" }}</td>
+          <td>{{ r.created_at }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" class="muted">No returns yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

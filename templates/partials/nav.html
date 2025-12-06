@@ -1,0 +1,19 @@
+<nav class="sidebar">
+  <div class="nav-header">Navigation</div>
+  <a href="{% url 'dashboard' %}">📊 Dashboard</a>
+  {% if user.role == 'admin' or user.role == 'parts' or user.role == 'accounting' or user.is_superuser %}
+    <a href="{% url 'invoice-list' %}">📄 Invoices</a>
+    <a href="{% url 'receipt-list' %}">📦 Receipts</a>
+  {% endif %}
+  {% if user.role == 'admin' or user.role == 'parts' or user.is_superuser %}
+    <a href="{% url 'return-list' %}">↩️ Returns</a>
+  {% endif %}
+  {% if user.role == 'admin' or user.role == 'service' or user.role == 'parts' or user.is_superuser %}
+    <a href="{% url 'service-list' %}">🔧 Service (Radio/VOR)</a>
+  {% endif %}
+  {% if user.role == 'admin' or user.role == 'sales' or user.role == 'parts' or user.is_superuser %}
+    <a href="{% url 'sales-list' %}">🛒 Sales Due Bills</a>
+  {% endif %}
+  <div class="nav-divider"></div>
+  <a href="/admin/">⚙️ Admin</a>
+</nav>

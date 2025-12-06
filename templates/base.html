@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PartSuite</title>
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body hx-boost="true">
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="dot"></span>
+        <div>
+          <div class="brand-title">PartSuite</div>
+          <div class="brand-sub">Parts · Service · Sales</div>
+        </div>
+      </div>
+      <div class="user-area">
+        {% if user.is_authenticated %}
+          <span class="user-pill">{{ user.username }} · {{ user.get_role_display }}</span>
+          <a class="button ghost" href="{% url 'logout' %}">Logout</a>
+        {% else %}
+          <a class="button" href="{% url 'login' %}">Login</a>
+        {% endif %}
+      </div>
+    </header>
+
+    <div class="layout">
+      {% if user.is_authenticated %}
+        {% include "partials/nav.html" %}
+      {% endif %}
+      <main class="content">
+        {% if messages %}
+          <div class="messages">
+            {% for message in messages %}
+              <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+</body>
+</html>
