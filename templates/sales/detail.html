@@ -38,26 +38,41 @@
 
 <section class="card">
   <h2>Items</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Description</th>
-        <th>Part #</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in object.items.all %}
+  <form method="post" action="{% url 'sales-items-update' object.pk %}">
+    {% csrf_token %}
+    <table>
+      <thead>
         <tr>
-          <td>{{ item.description }}</td>
-          <td>{{ item.part_number|default:"-" }}</td>
-          <td>{{ item.get_status_display }}</td>
+          <th>Done</th>
+          <th>Description</th>
+          <th>Part #</th>
+          <th>Status</th>
         </tr>
-      {% empty %}
-        <tr><td colspan="3" class="muted">No items.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        {% for item in object.items.all %}
+          <tr>
+            <td>
+              <input
+                type="checkbox"
+                name="completed"
+                value="{{ item.id }}"
+                {% if item.status == item.Status.INSTALLED %}checked{% endif %}
+              />
+            </td>
+            <td>{{ item.description }}</td>
+            <td>{{ item.part_number|default:"-" }}</td>
+            <td>{{ item.get_status_display }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4" class="muted">No items.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="meta">
+      <button type="submit" class="button">Update checklist</button>
+    </div>
+  </form>
   <form method="post" action="{% url 'sales-item-add' object.pk %}">
     {% csrf_token %}
     <div class="field">
