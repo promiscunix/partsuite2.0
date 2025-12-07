@@ -125,8 +125,14 @@ class DueBillCommentForm(forms.ModelForm):
     widgets = {"body": forms.Textarea(attrs={"rows": 2})}
 
 
+
+
+class MultipleFileInput(forms.ClearableFileInput):
+  allow_multiple_selected = True
+
+
 class FCAInvoiceUploadForm(forms.Form):
   files = forms.FileField(
     label="Invoice PDFs",
-    widget=forms.ClearableFileInput(attrs={"multiple": True, "accept": "application/pdf"}),
+    widget=MultipleFileInput(attrs={"multiple": True, "accept": "application/pdf"}),
   )
