@@ -123,7 +123,7 @@ class FCAInvoiceParserView(LoginRequiredMixin, TemplateView):
 
     output_dir = Path(settings.BASE_DIR) / "invoices" / "generated"
 
-    for upload in request.FILES.getlist("files"):
+    for upload in form.cleaned_data["files"]:
       with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
         for chunk in upload.chunks():
           tmp.write(chunk)

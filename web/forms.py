@@ -134,5 +134,12 @@ class MultipleFileInput(forms.ClearableFileInput):
 class FCAInvoiceUploadForm(forms.Form):
   files = forms.FileField(
     label="Invoice PDFs",
+    required=False,
     widget=MultipleFileInput(attrs={"multiple": True, "accept": "application/pdf"}),
   )
+
+  def clean_files(self):
+    uploads = self.files.getlist("files")
+    if not uploads:
+      raise forms.ValidationError("Please choose at least one PDF.")
+    return uploads
