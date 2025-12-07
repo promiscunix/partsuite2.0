@@ -242,6 +242,33 @@ input:focus, select:focus, textarea:focus {
 .message.error { border-color: rgba(244, 67, 54, 0.4); background: rgba(244, 67, 54, 0.14); color: #ffd6d3; }
 .message.warning { border-color: rgba(255, 193, 7, 0.35); background: rgba(255, 193, 7, 0.14); color: #fff6d5; }
 
+.drop-form { display: flex; flex-direction: column; gap: 12px; }
+.dropzone {
+  position: relative;
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  background: rgba(255,255,255,0.02);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.dropzone:hover { border-color: rgba(124,58,237,0.6); background: rgba(124,58,237,0.05); }
+.dropzone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.drop-text { pointer-events: none; text-align: center; display: flex; flex-direction: column; gap: 4px; }
+.helper-text { color: var(--muted); font-size: 14px; }
+.downloads { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
+.result-block { border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 12px; background: rgba(255,255,255,0.03); }
+.result-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px; }
+.result-title { font-weight: 800; font-size: 16px; }
+.summary-preview { margin-top: 8px; }
+.summary-preview pre { background: rgba(255,255,255,0.04); padding: 10px; border-radius: 8px; color: #f7f5ff; white-space: pre-wrap; }
+table.mini th, table.mini td { padding: 8px 10px; }
+
 @media (max-width: 960px) {
   .layout {
     grid-template-columns: 1fr;

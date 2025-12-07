@@ -1,3 +1,7 @@
+from pathlib import Path
+import tempfile
+
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
@@ -7,6 +11,12 @@ from django.utils import timezone
 from django.views.generic import TemplateView, ListView, DetailView, CreateView
 
 from accounts.models import User
+from invoices.fca_parser import (
+  FCAInvoiceParser,
+  encode_pdf_for_download,
+  render_mapping_pdf,
+  render_summary_pdf,
+)
 from invoices.models import Invoice, InvoiceLine
 from receipts.models import ReceiptUpload
 from returns.models import ReturnRequest
@@ -22,6 +32,7 @@ from .forms import (
   DueBillRequestForm,
   DueBillItemForm,
   DueBillCommentForm,
+  FCAInvoiceUploadForm,
 )
 from web.decorators import role_required
 
@@ -91,6 +102,58 @@ class InvoiceLineCreateView(LoginRequiredMixin, CreateView):
 
   def get_success_url(self):
     return reverse("invoice-detail", args=[self.invoice.pk])
+
+
+@method_decorator(role_required([User.Role.ADMIN, User.Role.PARTS, User.Role.ACCOUNTING]), name="dispatch")
+class FCAInvoiceParserView(LoginRequiredMixin, TemplateView):
+  template_name = "invoices/fca_tool.html"
+
+  def get_context_data(self, **kwargs):
+    ctx = super().get_context_data(**kwargs)
+    ctx.setdefault("form", FCAInvoiceUploadForm())
+    ctx.setdefault("results", [])
+    return ctx
+
+  def post(self, request, *args, **kwargs):
+    form = FCAInvoiceUploadForm(request.POST, request.FILES)
+    ctx = self.get_context_data(form=form, results=[])
+    if not form.is_valid():
+      return self.render_to_response(ctx)
+
+    output_dir = Path(settings.BASE_DIR) / "invoices" / "generated"
+
+    for upload in request.FILES.getlist("files"):
+      with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+        for chunk in upload.chunks():
+          tmp.write(chunk)
+        tmp_path = Path(tmp.name)
+
+      try:
+        parser = FCAInvoiceParser(tmp_path)
+        parsed_invoices = parser.parse()
+      except Exception as exc:
+        ctx["results"].append({
+          "source_name": upload.name,
+          "error": str(exc),
+        })
+        tmp_path.unlink(missing_ok=True)
+        continue
+
+      for parsed in parsed_invoices:
+        summary_path = render_summary_pdf(parsed, output_dir)
+        mapping_path = render_mapping_pdf(parsed, output_dir)
+        ctx["results"].append({
+          "source_name": upload.name,
+          "invoice": parsed,
+          "summary_path": summary_path,
+          "mapping_path": mapping_path,
+          "summary_b64": encode_pdf_for_download(summary_path),
+          "mapping_b64": encode_pdf_for_download(mapping_path),
+        })
+
+      tmp_path.unlink(missing_ok=True)
+
+    return self.render_to_response(ctx)
 
 
 @method_decorator(role_required([User.Role.ADMIN, User.Role.PARTS]), name="dispatch")
