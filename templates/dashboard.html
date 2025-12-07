@@ -1,37 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="grid">
-  <div class="card stat">
-    <div class="stat-value">{{ stats.invoices }}</div>
-    <div class="stat-label">Invoices</div>
+<div class="card hero">
+  <div>
+    <p class="meta-line">Choose where you need to work today</p>
+    <h1>Welcome back, {{ user.first_name|default:user.username }}</h1>
+    <p class="muted">Pick Parts, Service, or Sales to jump straight into the tools your role can use.</p>
   </div>
-  <div class="card stat">
-    <div class="stat-value">{{ stats.returns }}</div>
-    <div class="stat-label">Returns</div>
-  </div>
-  <div class="card stat">
-    <div class="stat-value">{{ stats.service_requests }}</div>
-    <div class="stat-label">Service requests</div>
-  </div>
-  <div class="card stat">
-    <div class="stat-value">{{ stats.due_bills }}</div>
-    <div class="stat-label">Due bills</div>
-  </div>
-</section>
+</div>
 
-<section class="grid">
-  {% if user.role == 'admin' or user.role == 'parts' or user.role == 'accounting' or user.is_superuser %}
-    <a class="card button" href="{% url 'invoice-create' %}">Create invoice</a>
-    <a class="card button" href="{% url 'receipt-create' %}">Log receipt</a>
-  {% endif %}
-  {% if user.role == 'admin' or user.role == 'parts' or user.is_superuser %}
-    <a class="card button" href="{% url 'return-create' %}">New return</a>
-  {% endif %}
-  {% if user.role == 'admin' or user.role == 'service' or user.role == 'parts' or user.is_superuser %}
-    <a class="card button" href="{% url 'service-create' %}">New service request</a>
-  {% endif %}
-  {% if user.role == 'admin' or user.role == 'sales' or user.role == 'parts' or user.is_superuser %}
-    <a class="card button" href="{% url 'sales-create' %}">New due bill</a>
-  {% endif %}
+<section class="section-grid">
+  {% for section in sections %}
+    <div class="card section-card {% if not section.allowed %}section-card--disabled{% endif %}">
+      <div class="section-card__header">
+        <div>
+          <p class="meta-line">{{ section.title }}</p>
+          <h2>{{ section.description }}</h2>
+        </div>
+        {% if section.allowed %}
+          <a class="button" href="{{ section.entry_url }}">Enter {{ section.title }}</a>
+        {% else %}
+          <span class="pill">No access</span>
+        {% endif %}
+      </div>
+      <ul class="section-actions">
+        {% for action in section.actions %}
+          <li>
+            {% if section.allowed %}
+              <a href="{{ action.url }}">{{ action.label }}</a>
+            {% else %}
+              <span class="muted">{{ action.label }}</span>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endfor %}
 </section>
 {% endblock %}
