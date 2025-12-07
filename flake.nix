@@ -24,7 +24,6 @@
           uvicorn
           gunicorn
         ]);
-        tessdata = pkgs.tesseractPackages.tessdata_fast;
       in {
         devShells.default = pkgs.mkShell {
           packages = [
@@ -33,14 +32,13 @@
             pkgs.redis
             pkgs.minio-client
             pkgs.tesseract
-            tessdata
             pkgs.poppler_utils
             pkgs.imagemagick
           ];
 
           shellHook = ''
             export DJANGO_SETTINGS_MODULE=partsuite.settings
-            export TESSDATA_PREFIX=${tessdata}/share/tessdata
+            export TESSDATA_PREFIX=${pkgs.tesseract}/share/tessdata
             echo "Dev shell ready. Python: $(python --version)"
           '';
         };
