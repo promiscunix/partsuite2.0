@@ -46,11 +46,36 @@ def extract_text_with_tesseract(pdf_path: Path, dpi: int = 300) -> List[str]:
   return pages_text
 
 
+def extract_text_with_pypdf(pdf_path: Path) -> List[str]:
+  """
+  Pure-Python fallback using pypdf. This avoids external binaries when available.
+  """
+  from pypdf import PdfReader
+
+  reader = PdfReader(str(pdf_path))
+  pages: List[str] = []
+  for page in reader.pages:
+    text = (page.extract_text() or "").strip()
+    if text:
+      pages.append(text)
+  return pages
+
+
 def extract_pdf_text(pdf_path: str) -> List[str]:
   """
   Extract text from a PDF. Try pdftotext first; if mostly empty, fallback to OCR.
   """
   path = Path(pdf_path)
+  try:
+    pages = extract_text_with_pypdf(path)
+    if pages:
+      return pages
+  except ImportError:
+    # Optional dependency not installed; continue to system tools
+    pages = []
+  except Exception:
+    pages = []
+
   try:
     pages = extract_text_with_poppler(path)
     if pages and any(len(p) > 40 for p in pages):
@@ -59,7 +84,10 @@ def extract_pdf_text(pdf_path: str) -> List[str]:
     pages = []
 
   # OCR fallback
-  return extract_text_with_tesseract(path)
+  try:
+    return extract_text_with_tesseract(path)
+  except FileNotFoundError as exc:
+    raise RuntimeError("pdftoppm and tesseract are required for OCR fallback") from exc
 
 
 def parse_text_cache(raw: str) -> List[str]:
