@@ -11,5 +11,28 @@
     </div>
     <button type="submit" class="button primary">Save</button>
   </form>
+  <script>
+    const receivedInput = document.querySelector('input[name="received_date"]');
+    const expiryInput = document.querySelector('input[name="expiry_date"]');
+
+    function updateExpiry() {
+      if (!receivedInput || !expiryInput) return;
+      const value = receivedInput.value;
+      if (!value) {
+        expiryInput.value = "";
+        return;
+      }
+
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return;
+
+      const expiry = new Date(date);
+      expiry.setDate(expiry.getDate() + 30);
+      expiryInput.value = expiry.toISOString().split("T")[0];
+    }
+
+    receivedInput?.addEventListener("change", updateExpiry);
+    updateExpiry();
+  </script>
 </section>
 {% endblock %}
