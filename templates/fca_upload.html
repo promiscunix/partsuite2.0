@@ -18,6 +18,9 @@
   </head>
   <body>
     <h1>Upload combined FCA PDF</h1>
+    {% if error %}
+      <p style="color: red; font-weight: bold">{{ error }}</p>
+    {% endif %}
     <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
       <div id="dropzone" class="dropzone">
         <p>Drag & drop a combined FCA PDF here, or click to choose a file.</p>
