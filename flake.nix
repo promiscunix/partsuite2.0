@@ -15,6 +15,7 @@
           djangorestframework
           django-filter
           django-environ
+          pypdf
           drf-spectacular
           celery
           redis
