@@ -18,4 +18,20 @@
     <div class="stat-label">Due bills</div>
   </div>
 </section>
+
+<section class="grid">
+  {% if user.role == 'admin' or user.role == 'parts' or user.role == 'accounting' or user.is_superuser %}
+    <a class="card button" href="{% url 'invoice-create' %}">Create invoice</a>
+    <a class="card button" href="{% url 'receipt-create' %}">Log receipt</a>
+  {% endif %}
+  {% if user.role == 'admin' or user.role == 'parts' or user.is_superuser %}
+    <a class="card button" href="{% url 'return-create' %}">New return</a>
+  {% endif %}
+  {% if user.role == 'admin' or user.role == 'service' or user.role == 'parts' or user.is_superuser %}
+    <a class="card button" href="{% url 'service-create' %}">New service request</a>
+  {% endif %}
+  {% if user.role == 'admin' or user.role == 'sales' or user.role == 'parts' or user.is_superuser %}
+    <a class="card button" href="{% url 'sales-create' %}">New due bill</a>
+  {% endif %}
+</section>
 {% endblock %}
