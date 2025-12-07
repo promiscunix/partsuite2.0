@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django import forms
 
 from invoices.models import Invoice, InvoiceLine
@@ -49,6 +51,7 @@ class ServiceRequestForm(forms.ModelForm):
   warranty_type = forms.ChoiceField(
     choices=ServiceRequest.WarrantyType.choices, label="Warranty Type"
   )
+  received_date = forms.DateField(required=False, widget=forms.DateInput(attrs={"type": "date"}), label="Receive Date")
 
   class Meta:
     model = ServiceRequest
@@ -60,17 +63,25 @@ class ServiceRequestForm(forms.ModelForm):
       "customer_name",
       "customer_number",
       "warranty_type",
-      "promised_date",
+      "ordered_date",
+      "received_date",
       "expiry_date",
       "status",
       "assigned_to",
       "notes",
     ]
     widgets = {
-      "promised_date": forms.DateInput(attrs={"type": "date"}),
-      "expiry_date": forms.DateInput(attrs={"type": "date"}),
+      "ordered_date": forms.DateInput(attrs={"type": "date"}),
+      "expiry_date": forms.DateInput(attrs={"type": "date", "readonly": True}),
       "notes": forms.Textarea(attrs={"rows": 3}),
     }
+
+  def clean(self):
+    cleaned_data = super().clean()
+    received_date = cleaned_data.get("received_date")
+    if received_date:
+      cleaned_data["expiry_date"] = received_date + timedelta(days=30)
+    return cleaned_data
 
 
 class ServiceRequestCommentForm(forms.ModelForm):
