@@ -66,3 +66,7 @@ th, td {
   border: 1px solid var(--admin-border);
   border-radius: 8px;
 }
+.form-row select option {
+  background: #140f22;
+  color: var(--admin-text);
+}
