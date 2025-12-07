@@ -39,9 +39,15 @@ def _finalize_invoice(
 
     first_page_text = page_texts[0]
     summary_page_text = page_texts[-1]
-    metadata = parse_invoice_metadata(first_page_text)
-    summary_data = parse_summary(summary_page_text)
-    mapped_accounts = map_accounts_to_internal(summary_data)
+
+    try:
+        metadata = parse_invoice_metadata(first_page_text)
+        summary_data = parse_summary(summary_page_text)
+        mapped_accounts = map_accounts_to_internal(summary_data)
+    except Exception as exc:
+        raise InvoiceProcessingError(
+            f"Failed to parse invoice starting on page {invoice_pages[0] + 1}: {exc}"
+        ) from exc
 
     invoice_key_norm = metadata["invoice_key_norm"]
 

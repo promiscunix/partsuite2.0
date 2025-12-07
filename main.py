@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from pdf_utils import process_combined_pdf
+from pdf_utils import InvoiceProcessingError, process_combined_pdf
 
 BASE_DIR = Path(__file__).resolve().parent
 TEMPLATES_DIR = BASE_DIR / "templates"
@@ -38,6 +38,15 @@ async def upload_pdf(request: Request, file: UploadFile = File(...)):
 
     try:
         invoices = process_combined_pdf(tmp_path, OUTPUT_DIR)
+    except InvoiceProcessingError as exc:
+        return templates.TemplateResponse(
+            "fca_upload.html",
+            {
+                "request": request,
+                "error": str(exc),
+            },
+            status_code=400,
+        )
     finally:
         # Clean up uploaded file
         try:
