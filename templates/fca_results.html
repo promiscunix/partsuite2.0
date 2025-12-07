@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Parsed FCA invoices</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 2rem; }
+      table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+      th, td { border: 1px solid #ddd; padding: 8px; }
+      th { background: #f3f3f3; }
+      h2 { margin-top: 2rem; }
+    </style>
+  </head>
+  <body>
+    <h1>Parsed invoices</h1>
+    <p><a href="/">Upload another file</a></p>
+    {% if invoices %}
+      {% for inv in invoices %}
+        <h2>{{ inv.invoice_key_norm }} ({{ inv.invoice_type_desc }})</h2>
+        <p>Date: {{ inv.invoice_date_iso }} | Invoice number: {{ inv.invoice_number_raw }}</p>
+        <ul>
+          <li><a href="/{{ inv.files.invoice_pdf }}" target="_blank">Full invoice PDF</a></li>
+          <li><a href="/{{ inv.files.summary_pdf }}" target="_blank">Summary page PDF</a></li>
+          <li><a href="/{{ inv.files.summary_mapping_pdf }}" target="_blank">Summary + mapping PDF</a></li>
+        </ul>
+        <table>
+          <thead>
+            <tr>
+              <th>FCA code</th>
+              <th>Description</th>
+              <th>Amount</th>
+              <th>Internal GL</th>
+              <th>Label</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in inv.mapped_accounts %}
+              <tr>
+                <td>{{ row.fca_code }}</td>
+                <td>{{ row.fca_description }}</td>
+                <td style="text-align:right">{{ '%.2f'|format(row.fca_amount) }}</td>
+                <td>{{ row.internal_gl_account or 'N/A' }}</td>
+                <td>{{ row.internal_label or '' }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endfor %}
+    {% else %}
+      <p>No invoices were detected.</p>
+    {% endif %}
+  </body>
+</html>
