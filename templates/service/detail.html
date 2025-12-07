@@ -13,7 +13,8 @@
     <div><dt>RO #</dt><dd>{{ object.ro_number|default:"-" }}</dd></div>
     <div><dt>Customer #</dt><dd>{{ object.customer_number|default:"-" }}</dd></div>
     <div><dt>Warranty</dt><dd>{{ object.get_warranty_type_display|default:"-" }}</dd></div>
-    <div><dt>Promised</dt><dd>{{ object.promised_date|default:"-" }}</dd></div>
+    <div><dt>Ordered</dt><dd>{{ object.ordered_date|default:"-" }}</dd></div>
+    <div><dt>Received</dt><dd>{{ object.received_date|default:"-" }}</dd></div>
     <div><dt>Expiry</dt><dd>{{ object.expiry_date|default:"-" }}</dd></div>
     <div><dt>Assigned</dt><dd>{{ object.assigned_to|default:"-" }}</dd></div>
   </dl>

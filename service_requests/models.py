@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.conf import settings
 from django.db import models
 
@@ -30,7 +32,8 @@ class ServiceRequest(TimeStampedModel):
   warranty_type = models.CharField(
     max_length=32, choices=WarrantyType.choices, default=WarrantyType.MOPAR_WARRANTY
   )
-  promised_date = models.DateField(null=True, blank=True)
+  ordered_date = models.DateField(null=True, blank=True)
+  received_date = models.DateField(null=True, blank=True)
   expiry_date = models.DateField(null=True, blank=True)
   status = models.CharField(max_length=32, choices=Status.choices, default=Status.OPEN)
   created_by = models.ForeignKey(
@@ -43,6 +46,11 @@ class ServiceRequest(TimeStampedModel):
 
   def __str__(self) -> str:
     return f"{self.get_request_type_display()} ({self.vin or 'no VIN'})"
+
+  def save(self, *args, **kwargs):
+    if self.received_date:
+      self.expiry_date = self.received_date + timedelta(days=30)
+    super().save(*args, **kwargs)
 
 
 class ServiceRequestComment(TimeStampedModel):
