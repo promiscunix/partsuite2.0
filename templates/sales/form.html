@@ -9,7 +9,82 @@
     <div class="form-grid">
       {{ form.as_p }}
     </div>
+
+    <div class="field">
+      <div class="header">
+        <div>
+          <h2>Promises / To-do items</h2>
+          <p class="muted">Add each promised item on its own line so you can track and check them off later.</p>
+        </div>
+        <button type="button" class="button" id="add-item">Add item</button>
+      </div>
+      {{ item_formset.management_form }}
+      <div id="items-container" class="form-grid">
+        {% for item_form in item_formset %}
+          <div class="card" data-item-index="{{ forloop.counter0 }}">
+            <div class="field">{{ item_form.description.label_tag }}{{ item_form.description }}</div>
+            <div class="field">{{ item_form.part_number.label_tag }}{{ item_form.part_number }}</div>
+            <div class="field">{{ item_form.status.label_tag }}{{ item_form.status }}</div>
+            {% if item_formset.can_delete %}
+              <div class="field">
+                <label class="muted remove-row">Remove {{ item_form.DELETE }}</label>
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      <template id="item-form-template">
+        <div class="card" data-item-index="__prefix__">
+          <div class="field">
+            {{ item_formset.empty_form.description.label_tag }}{{ item_formset.empty_form.description }}
+          </div>
+          <div class="field">
+            {{ item_formset.empty_form.part_number.label_tag }}{{ item_formset.empty_form.part_number }}
+          </div>
+          <div class="field">
+            {{ item_formset.empty_form.status.label_tag }}{{ item_formset.empty_form.status }}
+          </div>
+          {% if item_formset.can_delete %}
+            <div class="field">
+              <label class="muted remove-row">Remove {{ item_formset.empty_form.DELETE }}</label>
+            </div>
+          {% endif %}
+        </div>
+      </template>
+    </div>
     <button type="submit" class="button primary">Save</button>
   </form>
 </section>
+<script>
+  (function() {
+    const container = document.querySelector('#items-container');
+    const addBtn = document.querySelector('#add-item');
+    const totalInput = document.querySelector('#id_items-TOTAL_FORMS');
+    const template = document.querySelector('#item-form-template').innerHTML;
+
+    function refreshRemoveButtons() {
+      container.querySelectorAll('.remove-row input[type="checkbox"]').forEach((checkbox) => {
+        const wrapper = checkbox.closest('.card');
+        wrapper.querySelector('.remove-row').addEventListener('click', (e) => {
+          e.preventDefault();
+          checkbox.checked = true;
+          wrapper.style.display = 'none';
+        });
+      });
+    }
+
+    addBtn.addEventListener('click', () => {
+      const index = Number(totalInput.value);
+      const html = template.replace(/__prefix__/g, index);
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = html;
+      const card = wrapper.firstElementChild;
+      container.appendChild(card);
+      totalInput.value = index + 1;
+      refreshRemoveButtons();
+    });
+
+    refreshRemoveButtons();
+  })();
+</script>
 {% endblock %}

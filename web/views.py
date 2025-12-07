@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.views.generic import TemplateView, ListView, DetailView, CreateView
+from django.forms import formset_factory
 
 from accounts.models import User
 from invoices.fca_parser import (
@@ -267,11 +268,41 @@ class DueBillCreateView(LoginRequiredMixin, CreateView):
   model = DueBillRequest
   form_class = DueBillRequestForm
   template_name = "sales/form.html"
+  item_formset_class = formset_factory(DueBillItemForm, extra=1, can_delete=True)
+
+  def get_item_formset(self):
+    if self.request.method == "POST":
+      return self.item_formset_class(self.request.POST, prefix="items")
+    return self.item_formset_class(prefix="items")
 
   def form_valid(self, form):
+    item_formset = self.get_item_formset()
+    if not item_formset.is_valid():
+      return self.form_invalid(form)
+
     form.instance.requested_by = self.request.user
+    response = super().form_valid(form)
+
+    for item_form in item_formset:
+      if not item_form.cleaned_data or item_form.cleaned_data.get("DELETE"):
+        continue
+      item = item_form.save(commit=False)
+      item.request = self.object
+      if not item.status:
+        item.status = item._meta.get_field("status").default
+      item.save()
+
     messages.success(self.request, "Due bill created.")
-    return super().form_valid(form)
+    return response
+
+  def form_invalid(self, form):
+    messages.error(self.request, "Please fix the errors below and try again.")
+    return super().form_invalid(form)
+
+  def get_context_data(self, **kwargs):
+    ctx = super().get_context_data(**kwargs)
+    ctx["item_formset"] = kwargs.get("item_formset") or self.get_item_formset()
+    return ctx
 
   def get_success_url(self):
     return reverse("sales-detail", args=[self.object.pk])
@@ -290,6 +321,31 @@ def duebill_item_add(request, pk):
     messages.success(request, "Item added.")
   else:
     messages.error(request, "Could not add item.")
+  return redirect("sales-detail", pk=pk)
+
+
+@role_required([User.Role.ADMIN, User.Role.SALES, User.Role.PARTS])
+def duebill_items_update(request, pk):
+  req = get_object_or_404(DueBillRequest, pk=pk)
+  if request.method != "POST":
+    return redirect("sales-detail", pk=pk)
+
+  completed_ids = set(request.POST.getlist("completed"))
+  updated = 0
+
+  for item in req.items.all():
+    should_complete = str(item.id) in completed_ids
+    new_status = req.items.model.Status.INSTALLED if should_complete else req.items.model.Status.PENDING
+    if item.status != new_status:
+      item.status = new_status
+      item.save(update_fields=["status"])
+      updated += 1
+
+  if updated:
+    messages.success(request, "Checklist updated.")
+  else:
+    messages.info(request, "No changes made to items.")
+
   return redirect("sales-detail", pk=pk)
 
 

@@ -20,6 +20,7 @@ from .views import (
   DueBillDetailView,
   DueBillCreateView,
   duebill_item_add,
+  duebill_items_update,
   duebill_comment_add,
   duebill_send_to_parts,
 )
@@ -45,6 +46,7 @@ urlpatterns = [
   path("sales/new/", DueBillCreateView.as_view(), name="sales-create"),
   path("sales/<int:pk>/", DueBillDetailView.as_view(), name="sales-detail"),
   path("sales/<int:pk>/item/", duebill_item_add, name="sales-item-add"),
+  path("sales/<int:pk>/items/update/", duebill_items_update, name="sales-items-update"),
   path("sales/<int:pk>/comment/", duebill_comment_add, name="sales-comment-add"),
   path("sales/<int:pk>/send/", duebill_send_to_parts, name="sales-send"),
 ]
