@@ -43,6 +43,13 @@ class ReturnRequestForm(forms.ModelForm):
 
 
 class ServiceRequestForm(forms.ModelForm):
+  request_type = forms.ChoiceField(
+    choices=ServiceRequest.RequestType.choices, label="Request Type"
+  )
+  warranty_type = forms.ChoiceField(
+    choices=ServiceRequest.WarrantyType.choices, label="Warranty Type"
+  )
+
   class Meta:
     model = ServiceRequest
     fields = [

@@ -7,13 +7,13 @@ from common.models import TimeStampedModel
 class ServiceRequest(TimeStampedModel):
   class RequestType(models.TextChoices):
     RADIO = ("radio", "Radio")
-    VOR = ("vor", "Vehicle Off Road")
+    VOR = ("vor", "VOR")
 
   class WarrantyType(models.TextChoices):
     MOPAR_WARRANTY = ("mopar_warranty", "Mopar Warranty")
-    BASIC_WARRANTY = ("basic_warranty", "Basic Warranty")
     CUSTOMER_PAY = ("customer_pay", "Customer Pay")
-    SERVICE_CONTRACT = ("service_contract", "Service Contract")
+    REGULAR_WARRANTY = ("regular_warranty", "Regular Warranty")
+    GOOD_WILL = ("good_will", "Good Will")
 
   class Status(models.TextChoices):
     OPEN = ("open", "Open")
