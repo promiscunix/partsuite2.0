@@ -243,7 +243,7 @@ input:focus, select:focus, textarea:focus {
 .message.warning { border-color: rgba(255, 193, 7, 0.35); background: rgba(255, 193, 7, 0.14); color: #fff6d5; }
 
 .drop-form { display: flex; flex-direction: column; gap: 12px; }
-.dropzone {
+.dropzone { 
   position: relative;
   border: 2px dashed var(--border);
   border-radius: 16px;
@@ -252,7 +252,8 @@ input:focus, select:focus, textarea:focus {
   cursor: pointer;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
-.dropzone:hover { border-color: rgba(124,58,237,0.6); background: rgba(124,58,237,0.05); }
+.dropzone:hover,
+.dropzone.is-dragging { border-color: rgba(124,58,237,0.6); background: rgba(124,58,237,0.05); }
 .dropzone input[type="file"] {
   position: absolute;
   inset: 0;
