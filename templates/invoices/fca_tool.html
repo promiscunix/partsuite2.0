@@ -5,7 +5,7 @@
     <h1>FCA Mopar Invoice Parser</h1>
   </div>
   <p class="muted">Drop FCA invoices that start with <code>09308000</code> and we'll extract the summary page, map FCA accounts to your GL, and generate ready-to-save PDFs.</p>
-  <form method="post" enctype="multipart/form-data" class="drop-form">
+  <form method="post" enctype="multipart/form-data" class="drop-form" hx-boost="false">
     {% csrf_token %}
     <div class="dropzone">
       <div class="drop-text">
