@@ -14,10 +14,56 @@
       </div>
       {{ form.files }}
     </div>
+    {% if form.errors %}
+      <div class="message error">{{ form.errors.files.0|default:"Please choose at least one PDF." }}</div>
+    {% endif %}
     <div class="helper-text">We detect invoice type from the letters after 09308000 (e.g. W, CF) and use your mapping rules (warranty, freight, GST/HST, etc.).</div>
     <button type="submit" class="button primary">Parse invoices</button>
   </form>
 </section>
+
+<script>
+  (function () {
+    const form = document.querySelector('.drop-form');
+    const fileInput = form?.querySelector('input[type="file"]');
+    const dropzone = form?.querySelector('.dropzone');
+
+    if (!form || !fileInput || !dropzone) return;
+
+    const submitIfFiles = () => {
+      if (fileInput.files && fileInput.files.length) {
+        form.requestSubmit();
+      }
+    };
+
+    const setFilesFromTransfer = (dt) => {
+      const transfer = new DataTransfer();
+      Array.from(dt.files || []).forEach((file) => transfer.items.add(file));
+      if (transfer.files.length) {
+        fileInput.files = transfer.files;
+      }
+    };
+
+    ['dragenter', 'dragover'].forEach((evt) => {
+      dropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        dropzone.classList.add('is-dragging');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach((evt) => {
+      dropzone.addEventListener(evt, () => dropzone.classList.remove('is-dragging'));
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      setFilesFromTransfer(e.dataTransfer);
+      submitIfFiles();
+    });
+
+    fileInput.addEventListener('change', submitIfFiles);
+  })();
+</script>
 
 {% if results %}
   <section class="card">
