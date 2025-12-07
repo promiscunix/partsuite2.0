@@ -3,6 +3,7 @@
   <a href="{% url 'dashboard' %}">📊 Dashboard</a>
   {% if user.role == 'admin' or user.role == 'parts' or user.role == 'accounting' or user.is_superuser %}
     <a href="{% url 'invoice-list' %}">📄 Invoices</a>
+    <a href="{% url 'fca-parser' %}">🧾 FCA Parser</a>
     <a href="{% url 'receipt-list' %}">📦 Receipts</a>
   {% endif %}
   {% if user.role == 'admin' or user.role == 'parts' or user.is_superuser %}

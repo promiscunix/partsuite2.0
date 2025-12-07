@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <div class="header">
+    <h1>FCA Mopar Invoice Parser</h1>
+  </div>
+  <p class="muted">Drop FCA invoices that start with <code>09308000</code> and we'll extract the summary page, map FCA accounts to your GL, and generate ready-to-save PDFs.</p>
+  <form method="post" enctype="multipart/form-data" class="drop-form">
+    {% csrf_token %}
+    <div class="dropzone">
+      <div class="drop-text">
+        <strong>Drag and drop</strong> PDF invoices here or click to browse.
+        <span class="muted">Multiple invoices are supported. Multi-page invoices stay bundled.</span>
+      </div>
+      {{ form.files }}
+    </div>
+    <div class="helper-text">We detect invoice type from the letters after 09308000 (e.g. W, CF) and use your mapping rules (warranty, freight, GST/HST, etc.).</div>
+    <button type="submit" class="button primary">Parse invoices</button>
+  </form>
+</section>
+
+{% if results %}
+  <section class="card">
+    <div class="header">
+      <h2>Parsed invoices</h2>
+      <span class="pill">{{ results|length }} result{{ results|length|pluralize }}</span>
+    </div>
+    {% for res in results %}
+      <div class="result-block">
+        <div class="result-heading">
+          <div>
+            <div class="meta-line">Source file</div>
+            <div class="result-title">{{ res.source_name }}</div>
+          </div>
+          {% if res.invoice %}
+            <div class="pill">{{ res.invoice.title }}</div>
+          {% endif %}
+        </div>
+
+        {% if res.error %}
+          <div class="message error">{{ res.error }}</div>
+        {% else %}
+          <div class="downloads">
+            <a class="button ghost" href="data:application/pdf;base64,{{ res.summary_b64 }}" download="{{ res.invoice.invoice_code|default:'invoice' }}-summary.pdf">Download summary PDF</a>
+            <a class="button ghost" href="data:application/pdf;base64,{{ res.mapping_b64 }}" download="{{ res.invoice.invoice_code|default:'invoice' }}-mapping.pdf">Download GL mapping</a>
+          </div>
+          <div class="muted">Summary saved to {{ res.summary_path }} · Mapping saved to {{ res.mapping_path }}</div>
+          <table class="mini">
+            <thead>
+              <tr>
+                <th>FCA code</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Internal GL</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for line in res.invoice.accounts %}
+                <tr>
+                  <td>{{ line.source_code }}</td>
+                  <td>{{ line.description }}</td>
+                  <td>${{ line.amount }}</td>
+                  <td>{% if line.gl_account %}<span class="pill">{{ line.gl_account }}</span>{% else %}<span class="muted">Unmapped</span>{% endif %}</td>
+                  <td>{{ line.note|default:"" }}</td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="5" class="muted">No summary lines detected on the invoice summary page.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <details class="summary-preview">
+            <summary>Show raw summary page</summary>
+            <pre>{{ res.invoice.summary_page }}</pre>
+          </details>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </section>
+{% endif %}
+{% endblock %}

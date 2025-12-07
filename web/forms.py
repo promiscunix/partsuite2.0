@@ -123,3 +123,10 @@ class DueBillCommentForm(forms.ModelForm):
     model = DueBillComment
     fields = ["body"]
     widgets = {"body": forms.Textarea(attrs={"rows": 2})}
+
+
+class FCAInvoiceUploadForm(forms.Form):
+  files = forms.FileField(
+    label="Invoice PDFs",
+    widget=forms.ClearableFileInput(attrs={"multiple": True, "accept": "application/pdf"}),
+  )
