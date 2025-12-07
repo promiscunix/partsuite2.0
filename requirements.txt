@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+jinja2
+python-multipart
+pdfplumber
+PyPDF2
+reportlab
+pydantic
