@@ -43,12 +43,48 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
   def get_context_data(self, **kwargs):
     ctx = super().get_context_data(**kwargs)
-    ctx["stats"] = {
-      "invoices": Invoice.objects.count(),
-      "returns": ReturnRequest.objects.count(),
-      "service_requests": ServiceRequest.objects.count(),
-      "due_bills": DueBillRequest.objects.count(),
-    }
+    user = self.request.user
+
+    def has_access(roles):
+      return user.is_superuser or user.role in roles
+
+    ctx["sections"] = [
+      {
+        "key": "parts",
+        "title": "Parts",
+        "description": "Invoices, FCA parser, receipts, and returns.",
+        "entry_url": reverse("invoice-list"),
+        "actions": [
+          {"label": "Invoices", "url": reverse("invoice-list")},
+          {"label": "FCA Parser", "url": reverse("fca-parser")},
+          {"label": "Receipts", "url": reverse("receipt-list")},
+          {"label": "Returns", "url": reverse("return-list")},
+        ],
+        "allowed": has_access([User.Role.ADMIN, User.Role.PARTS, User.Role.ACCOUNTING]),
+      },
+      {
+        "key": "service",
+        "title": "Service",
+        "description": "Request a Radio or Request a VOR.",
+        "entry_url": reverse("service-list"),
+        "actions": [
+          {"label": "Service requests", "url": reverse("service-list")},
+          {"label": "Request a Radio / VOR", "url": reverse("service-create")},
+        ],
+        "allowed": has_access([User.Role.ADMIN, User.Role.SERVICE, User.Role.PARTS]),
+      },
+      {
+        "key": "sales",
+        "title": "Sales",
+        "description": "Request and track due bills.",
+        "entry_url": reverse("sales-list"),
+        "actions": [
+          {"label": "Due bill requests", "url": reverse("sales-list")},
+          {"label": "Request a due bill", "url": reverse("sales-create")},
+        ],
+        "allowed": has_access([User.Role.ADMIN, User.Role.SALES, User.Role.PARTS]),
+      },
+    ]
     return ctx
 
 
